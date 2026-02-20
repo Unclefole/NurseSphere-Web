@@ -1,0 +1,192 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ns-dark-950: #0a0e14;
+  --ns-dark-900: #0d1117;
+  --ns-dark-800: #141a22;
+  --ns-dark-700: #1c242e;
+  --ns-dark-600: #252f3b;
+  --ns-teal: #0d9488;
+  --ns-teal-light: #14b8a6;
+  --ns-cyan: #06b6d4;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-ns-dark-950 text-white;
+    background-image: 
+      radial-gradient(ellipse at 50% 0%, rgba(13, 148, 136, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 100% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--ns-dark-900);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--ns-dark-600);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--ns-teal);
+  }
+}
+
+@layer components {
+  /* Card styles matching the design */
+  .ns-card {
+    @apply bg-ns-dark-800 border border-ns-dark-600 rounded-xl;
+    background: linear-gradient(
+      145deg,
+      rgba(28, 36, 46, 0.8) 0%,
+      rgba(20, 26, 34, 0.9) 100%
+    );
+    backdrop-filter: blur(10px);
+  }
+
+  .ns-card-hover {
+    @apply ns-card transition-all duration-300;
+  }
+
+  .ns-card-hover:hover {
+    @apply border-ns-teal/50 shadow-lg;
+    box-shadow: 0 0 20px rgba(13, 148, 136, 0.15);
+    transform: translateY(-2px);
+  }
+
+  /* Button styles */
+  .ns-btn-primary {
+    @apply bg-ns-teal hover:bg-ns-teal-600 text-white font-medium py-2.5 px-5 rounded-lg;
+    @apply transition-all duration-200 shadow-md;
+  }
+
+  .ns-btn-primary:hover {
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.4);
+  }
+
+  .ns-btn-secondary {
+    @apply bg-transparent border border-ns-dark-600 hover:border-ns-teal text-white;
+    @apply font-medium py-2.5 px-5 rounded-lg transition-all duration-200;
+  }
+
+  /* Dashboard tile */
+  .ns-tile {
+    @apply ns-card-hover p-4 flex flex-col items-center justify-center gap-2 cursor-pointer;
+    @apply min-h-[100px];
+  }
+
+  .ns-tile-icon {
+    @apply w-10 h-10 flex items-center justify-center rounded-lg;
+  }
+
+  /* Input styles */
+  .ns-input {
+    @apply w-full bg-ns-dark-700 border border-ns-dark-600 rounded-lg px-4 py-2.5;
+    @apply text-white placeholder:text-gray-500 focus:outline-none focus:border-ns-teal;
+    @apply transition-colors duration-200;
+  }
+
+  /* Badge styles */
+  .ns-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .ns-badge-success {
+    @apply ns-badge bg-green-500/20 text-green-400;
+  }
+
+  .ns-badge-warning {
+    @apply ns-badge bg-yellow-500/20 text-yellow-400;
+  }
+
+  .ns-badge-error {
+    @apply ns-badge bg-red-500/20 text-red-400;
+  }
+
+  .ns-badge-info {
+    @apply ns-badge bg-blue-500/20 text-blue-400;
+  }
+
+  .ns-badge-pending {
+    @apply ns-badge bg-purple-500/20 text-purple-400;
+  }
+
+  /* Gradient header card matching design */
+  .ns-header-card {
+    background: linear-gradient(135deg, #0d9488 0%, #06b6d4 100%);
+    @apply rounded-xl p-6;
+  }
+
+  /* Status indicators */
+  .ns-status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+
+  .ns-status-dot-success {
+    @apply ns-status-dot bg-green-500;
+  }
+
+  .ns-status-dot-warning {
+    @apply ns-status-dot bg-yellow-500;
+  }
+
+  .ns-status-dot-error {
+    @apply ns-status-dot bg-red-500;
+  }
+}
+
+@layer utilities {
+  /* Fade in animation */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Stagger animation for tiles */
+  .animate-stagger {
+    animation: fadeIn 0.4s ease-out both;
+  }
+
+  .animate-stagger:nth-child(1) { animation-delay: 0ms; }
+  .animate-stagger:nth-child(2) { animation-delay: 50ms; }
+  .animate-stagger:nth-child(3) { animation-delay: 100ms; }
+  .animate-stagger:nth-child(4) { animation-delay: 150ms; }
+  .animate-stagger:nth-child(5) { animation-delay: 200ms; }
+  .animate-stagger:nth-child(6) { animation-delay: 250ms; }
+  .animate-stagger:nth-child(7) { animation-delay: 300ms; }
+  .animate-stagger:nth-child(8) { animation-delay: 350ms; }
+  .animate-stagger:nth-child(9) { animation-delay: 400ms; }
+  .animate-stagger:nth-child(10) { animation-delay: 450ms; }
+  .animate-stagger:nth-child(11) { animation-delay: 500ms; }
+  .animate-stagger:nth-child(12) { animation-delay: 550ms; }
+
+  /* Pulse glow effect */
+  .glow-teal {
+    box-shadow: 0 0 20px rgba(13, 148, 136, 0.3);
+  }
+}
+
