@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
 import { Building2, Mail, Lock, User, Phone, AlertCircle, Loader2, CheckCircle } from 'lucide-react'
 
@@ -48,7 +49,7 @@ export default function RegisterPage() {
         options: {
           data: {
             full_name: formData.adminName,
-            role: 'HOSPITAL',
+            role: 'hospital_admin',
           },
         },
       })
@@ -63,19 +64,17 @@ export default function RegisterPage() {
         return
       }
 
-      // 2. Create hospital record
-      const { data: hospital, error: hospitalError } = await supabase
-        .from('hospitals')
+      // 2. Create facility record
+      const { error: facilityError } = await supabase
+        .from('facilities')
         .insert({
           name: formData.hospitalName,
           phone: formData.phone,
           email: formData.email,
         })
-        .select()
-        .single()
 
-      if (hospitalError) {
-        console.error('Hospital creation error:', hospitalError)
+      if (facilityError) {
+        console.error('Facility creation error:', facilityError)
         // Continue anyway - profile creation is more important
       }
 
@@ -84,11 +83,8 @@ export default function RegisterPage() {
         .from('profiles')
         .upsert({
           id: authData.user.id,
-          email: formData.email,
           full_name: formData.adminName,
-          phone: formData.phone,
-          role: 'HOSPITAL',
-          hospital_id: hospital?.id || null,
+          role: 'hospital_admin',
         })
 
       if (profileError) {
@@ -130,9 +126,7 @@ export default function RegisterPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <span className="font-display text-3xl font-bold text-white">
-              NurseSphere<span className="text-ns-teal">.io</span>
-            </span>
+            <Image src="/logo.jpg" alt="NurseSphere" width={180} height={65} className="h-16 w-auto object-contain mx-auto" priority />
           </Link>
           <p className="mt-2 text-gray-400">Register your hospital</p>
         </div>

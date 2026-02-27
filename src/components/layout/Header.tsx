@@ -1,9 +1,22 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
-import { User, LogOut, Settings } from 'lucide-react'
+import {
+  User,
+  LogOut,
+  Settings,
+  LayoutDashboard,
+  Shield,
+  FileText,
+  CreditCard,
+  ClipboardList,
+  ShieldCheck,
+  ChevronDown,
+} from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
+import { NotificationBell } from '@/components/notifications/NotificationBell'
 
 export function Header() {
   const { user, signOut, isHospital } = useAuth()
@@ -26,14 +39,22 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <span className="font-display text-xl font-bold text-white">
-              NurseSphere<span className="text-ns-teal">.io</span>
-            </span>
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/logo.jpg"
+              alt="NurseSphere"
+              width={140}
+              height={50}
+              className="h-10 w-auto object-contain"
+              priority
+            />
           </Link>
 
           {/* Right side */}
           <div className="flex items-center gap-4">
+            {/* Notification bell — only shown when logged in */}
+            {user && <NotificationBell />}
+
             {user ? (
               <div className="relative" ref={dropdownRef}>
                 <button
@@ -50,31 +71,100 @@ export function Header() {
                 </button>
 
                 {showDropdown && (
-                  <div className="absolute right-0 mt-2 w-56 rounded-lg border border-ns-dark-600 bg-ns-dark-800 py-1 shadow-xl animate-fade-in">
+                  <div className="absolute right-0 mt-2 w-64 rounded-lg border border-ns-dark-600 bg-ns-dark-800 py-1 shadow-xl animate-fade-in">
                     <div className="border-b border-ns-dark-600 px-4 py-2">
                       <p className="text-sm font-medium text-white">
                         {user.profile?.full_name || 'User'}
                       </p>
                       <p className="text-xs text-gray-400">{user.email}</p>
                     </div>
+
+                    {/* Dashboard Link */}
                     <Link
-                      href="/settings"
+                      href="/dashboard"
                       className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-ns-dark-700 hover:text-white"
                       onClick={() => setShowDropdown(false)}
                     >
-                      <Settings className="h-4 w-4" />
-                      Settings
+                      <LayoutDashboard className="h-4 w-4" />
+                      Dashboard
                     </Link>
-                    <button
-                      onClick={() => {
-                        signOut()
-                        setShowDropdown(false)
-                      }}
-                      className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-ns-dark-700 hover:text-white"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      Sign out
-                    </button>
+
+                    {/* Hospital Admin Nav */}
+                    {isHospital && (
+                      <>
+                        <div className="px-4 pt-2 pb-1">
+                          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            Management
+                          </p>
+                        </div>
+                        <Link
+                          href="/billing"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-ns-dark-700 hover:text-white"
+                          onClick={() => setShowDropdown(false)}
+                        >
+                          <CreditCard className="h-4 w-4" />
+                          Billing
+                        </Link>
+                        <Link
+                          href="/contracts"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-ns-dark-700 hover:text-white"
+                          onClick={() => setShowDropdown(false)}
+                        >
+                          <FileText className="h-4 w-4" />
+                          Invoices &amp; Contracts
+                        </Link>
+                        <div className="px-4 pt-2 pb-1">
+                          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            Compliance
+                          </p>
+                        </div>
+                        <Link
+                          href="/dashboard/credentials"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-ns-dark-700 hover:text-white"
+                          onClick={() => setShowDropdown(false)}
+                        >
+                          <Shield className="h-4 w-4" />
+                          Credentials
+                        </Link>
+                        <Link
+                          href="/dashboard/audit-log"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-ns-dark-700 hover:text-white"
+                          onClick={() => setShowDropdown(false)}
+                        >
+                          <ClipboardList className="h-4 w-4" />
+                          Audit Log
+                        </Link>
+                        <Link
+                          href="/dashboard/security"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-ns-dark-700 hover:text-white"
+                          onClick={() => setShowDropdown(false)}
+                        >
+                          <ShieldCheck className="h-4 w-4" />
+                          Security
+                        </Link>
+                      </>
+                    )}
+
+                    <div className="border-t border-ns-dark-600 mt-1">
+                      <Link
+                        href="/settings"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-ns-dark-700 hover:text-white"
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        <Settings className="h-4 w-4" />
+                        Settings
+                      </Link>
+                      <button
+                        onClick={() => {
+                          signOut()
+                          setShowDropdown(false)
+                        }}
+                        className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:bg-ns-dark-700 hover:text-white"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Sign out
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
