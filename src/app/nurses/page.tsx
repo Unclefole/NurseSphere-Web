@@ -54,19 +54,14 @@ export default function NursesPage() {
   }, [user, authLoading, isHospital, router])
 
   useEffect(() => {
-    if (!user?.hospitalId) return
+    if (!user?.facilityId) return
 
     const fetchNurses = async () => {
       setLoading(true)
       try {
-        // Get nurses who have applied to or worked at this hospital
-        const { data: hospitalNurseIds } = await supabase
-          .from('applications')
-          .select('nurse_id')
-          .eq('hospital_id', user.hospitalId)
-          .eq('status', 'approved')
-
-        const nurseIds = [...new Set(hospitalNurseIds?.map(a => a.nurse_id) || [])]
+        // Runtime guard: applications table not yet provisioned
+        // TODO: Replace with real query when applications table exists
+        const nurseIds: string[] = []
 
         if (nurseIds.length === 0) {
           setNurses([])
@@ -75,7 +70,7 @@ export default function NursesPage() {
         }
 
         const { data, error } = await supabase
-          .from('nurses')
+          .from('profiles')
           .select(`
             id,
             user_id,

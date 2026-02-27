@@ -69,19 +69,14 @@ export default function CompliancePage() {
   }, [user, authLoading, isHospital, router])
 
   useEffect(() => {
-    if (!user?.hospitalId) return
+    if (!user?.facilityId) return
 
     const fetchCompliance = async () => {
       setLoading(true)
       try {
-        // Get nurses associated with this hospital through shifts/applications
-        const { data: hospitalNurses } = await supabase
-          .from('applications')
-          .select('nurse_id')
-          .eq('hospital_id', user.hospitalId)
-          .eq('status', 'approved')
-
-        const nurseIds = [...new Set(hospitalNurses?.map(a => a.nurse_id) || [])]
+        // Runtime guard: applications table not yet provisioned
+        // TODO: Replace with real query when applications table exists
+        const nurseIds: string[] = []
 
         if (nurseIds.length === 0) {
           setRecords([])
@@ -90,7 +85,7 @@ export default function CompliancePage() {
         }
 
         let query = supabase
-          .from('compliance_records')
+          .from('credentials')
           .select(`
             id,
             nurse_id,
@@ -100,7 +95,7 @@ export default function CompliancePage() {
             issued_at,
             expires_at,
             verified_at,
-            nurse:nurses!inner (
+            nurse:profiles!inner (
               profiles:profiles!inner (
                 full_name,
                 email

@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import { DashboardLayout } from '@/components/layout'
-import { supabase } from '@/lib/supabase'
 import {
   ArrowLeft,
   Calendar,
@@ -16,14 +15,16 @@ import {
   AlertCircle,
   Loader2,
   CheckCircle,
+  CreditCard,
 } from 'lucide-react'
 
 export default function CreateShiftPage() {
-  const { user, loading: authLoading, isHospital } = useAuth()
+  const { user, session, loading: authLoading, isHospital } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [paymentRequired, setPaymentRequired] = useState(false)
 
   const [formData, setFormData] = useState({
     title: '',
@@ -35,6 +36,7 @@ export default function CreateShiftPage() {
     end_time: '',
     hourly_rate: '',
   })
+  const [marketplaceVisible, setMarketplaceVisible] = useState(true)
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -54,10 +56,11 @@ export default function CreateShiftPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setPaymentRequired(false)
     setLoading(true)
 
-    if (!user?.hospitalId) {
-      setError('Hospital ID not found')
+    if (!user?.facilityId) {
+      setError('Facility not found. Please set up your facility first.')
       setLoading(false)
       return
     }
@@ -74,20 +77,36 @@ export default function CreateShiftPage() {
         return
       }
 
-      const { error: insertError } = await supabase.from('shifts').insert({
-        hospital_id: user.hospitalId,
-        title: formData.title,
-        description: formData.description || null,
-        department: formData.department || null,
-        specialty_required: formData.specialty_required || null,
-        start_time: startDateTime.toISOString(),
-        end_time: endDateTime.toISOString(),
-        hourly_rate: parseFloat(formData.hourly_rate),
-        status: 'open',
+      // Use API endpoint so the payment guard runs server-side
+      const res = await fetch('/api/shifts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token
+            ? { Authorization: `Bearer ${session.access_token}` }
+            : {}),
+        },
+        body: JSON.stringify({
+          facilityId: user.facilityId,
+          title: formData.title,
+          startTime: startDateTime.toISOString(),
+          endTime: endDateTime.toISOString(),
+          hourlyRate: formData.hourly_rate ? parseFloat(formData.hourly_rate) : undefined,
+          specialty: formData.specialty_required || undefined,
+        }),
       })
 
-      if (insertError) {
-        setError(insertError.message)
+      // 402 = payment method required before posting shifts
+      if (res.status === 402) {
+        setPaymentRequired(true)
+        setLoading(false)
+        return
+      }
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        setError(errData.message ?? errData.error ?? 'Failed to create shift')
+        setLoading(false)
         return
       }
 
@@ -142,6 +161,29 @@ export default function CreateShiftPage() {
         {/* Form */}
         <div className="ns-card p-6">
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Payment method required — 402 response */}
+            {paymentRequired && (
+              <div className="p-4 rounded-lg bg-amber-900/20 border border-amber-600/40 text-amber-300 text-sm">
+                <div className="flex items-start gap-3 mb-3">
+                  <CreditCard className="h-5 w-5 flex-shrink-0 mt-0.5 text-amber-400" />
+                  <div>
+                    <p className="font-semibold text-amber-200 mb-0.5">Payment Method Required</p>
+                    <p className="text-amber-300/80">
+                      Add a payment method to your account before posting shifts. Nurses are
+                      automatically paid after each completed shift.
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  href="/dashboard/billing"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-sm font-medium transition-colors"
+                >
+                  <CreditCard className="h-4 w-4" />
+                  Add a Payment Method
+                </Link>
+              </div>
+            )}
+
             {error && (
               <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -305,6 +347,29 @@ export default function CreateShiftPage() {
                 className="ns-input min-h-[100px]"
                 placeholder="Additional details about the shift..."
               />
+            </div>
+
+            {/* Marketplace Visibility */}
+            <div className="flex items-center justify-between p-4 bg-ns-dark-800 border border-ns-dark-600 rounded-lg">
+              <div>
+                <label className="text-sm font-medium text-gray-300">Marketplace Visibility</label>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Allow nurses to find and apply to this shift via the marketplace
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMarketplaceVisible(v => !v)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  marketplaceVisible ? 'bg-ns-teal' : 'bg-ns-dark-600'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    marketplaceVisible ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
             </div>
 
             {/* Submit */}

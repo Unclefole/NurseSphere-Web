@@ -57,18 +57,18 @@ export default function SettingsPage() {
     if (user.profile) {
       setProfileData({
         full_name: user.profile.full_name || '',
-        phone: user.profile.phone || '',
+        phone: '',
       })
     }
 
-    // Load hospital data
-    const fetchHospital = async () => {
-      if (!user.hospitalId) return
+    // Load facility data
+    const fetchFacility = async () => {
+      if (!user.facilityId) return
 
       const { data } = await supabase
-        .from('hospitals')
+        .from('facilities')
         .select('name, address, city, state, zip_code, phone')
-        .eq('id', user.hospitalId)
+        .eq('id', user.facilityId)
         .single()
 
       if (data) {
@@ -83,7 +83,7 @@ export default function SettingsPage() {
       }
     }
 
-    fetchHospital()
+    fetchFacility()
   }, [user])
 
   const handleSave = async () => {
@@ -99,8 +99,6 @@ export default function SettingsPage() {
         .from('profiles')
         .update({
           full_name: profileData.full_name,
-          phone: profileData.phone,
-          updated_at: new Date().toISOString(),
         })
         .eq('id', user.id)
 
@@ -109,10 +107,10 @@ export default function SettingsPage() {
         return
       }
 
-      // Update hospital
-      if (user.hospitalId) {
-        const { error: hospitalError } = await supabase
-          .from('hospitals')
+      // Update facility
+      if (user.facilityId) {
+        const { error: facilityError } = await supabase
+          .from('facilities')
           .update({
             name: hospitalData.name,
             address: hospitalData.address,
@@ -120,12 +118,11 @@ export default function SettingsPage() {
             state: hospitalData.state,
             zip_code: hospitalData.zip_code,
             phone: hospitalData.phone,
-            updated_at: new Date().toISOString(),
           })
-          .eq('id', user.hospitalId)
+          .eq('id', user.facilityId)
 
-        if (hospitalError) {
-          setError(hospitalError.message)
+        if (facilityError) {
+          setError(facilityError.message)
           return
         }
       }

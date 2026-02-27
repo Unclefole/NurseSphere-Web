@@ -54,7 +54,7 @@ export default function AnalyticsPage() {
   }, [user, authLoading, isHospital, router])
 
   useEffect(() => {
-    if (!user?.hospitalId) return
+    if (!user?.facilityId) return
 
     const fetchAnalytics = async () => {
       setLoading(true)
@@ -82,7 +82,7 @@ export default function AnalyticsPage() {
         let contractsQuery = supabase
           .from('contracts')
           .select('id, status, spheri_generated, spheri_optimized, created_at, nurse_signed_at')
-          .eq('hospital_id', user.hospitalId)
+          .eq('facility_id', user.facilityId)
 
         if (startDate) {
           contractsQuery = contractsQuery.gte('created_at', startDate.toISOString())
@@ -116,13 +116,8 @@ export default function AnalyticsPage() {
           avgTimeToSign = totalTime / signedWithTimes.length / (1000 * 60 * 60) // Convert to hours
         }
 
-        // Fetch stored analytics metrics (if any exist in analytics table)
-        const { data: storedAnalytics } = await supabase
-          .from('analytics')
-          .select('metric_type, metric_value, period_start, period_end')
-          .eq('hospital_id', user.hospitalId)
-          .order('period_end', { ascending: false })
-          .limit(10)
+        // Runtime guard: analytics table not yet provisioned
+        const storedAnalytics: any[] | null = null
 
         // Calculate weekly trend
         const weeklyTrend: { week: string; contracts: number; signed: number }[] = []

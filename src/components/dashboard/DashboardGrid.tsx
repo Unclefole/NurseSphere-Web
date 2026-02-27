@@ -12,12 +12,16 @@ const dashboardTiles = [
   { id: 'nurses', title: 'Nurses', href: '/nurses' },
   { id: 'analytics', title: 'Analytics', href: '/analytics' },
   { id: 'billing', title: 'Billing', href: '/billing' },
+  { id: 'invoices', title: 'Invoices', href: '/contracts' },
+  { id: 'credentials', title: 'Credentials', href: '/dashboard/credentials' },
   { id: 'compliance', title: 'Compliance', href: '/compliance' },
   { id: 'forecasting', title: 'Forecasting', href: '/forecasting' },
   { id: 'live-map', title: 'Live Map', href: '/map' },
   { id: 'crm', title: 'CRM', href: '/crm' },
   { id: 'incidents', title: 'Incidents', href: '/incidents' },
   { id: 'education', title: 'Education', href: '/education' },
+  { id: 'audit-log', title: 'Audit Log', href: '/dashboard/audit-log' },
+  { id: 'security', title: 'Security', href: '/dashboard/security' },
 ]
 
 interface DashboardGridProps {

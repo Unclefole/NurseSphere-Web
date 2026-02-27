@@ -20,6 +20,7 @@ import {
   Plus,
   MapPin,
   DollarSign,
+  Users,
 } from 'lucide-react'
 import { format } from 'date-fns'
 import type { ShiftStatus } from '@/types/database'
@@ -58,6 +59,7 @@ export default function ShiftsPage() {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<ShiftStatus | 'all'>('all')
+  const [appCounts, setAppCounts] = useState<Record<string, number>>({})
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -72,7 +74,7 @@ export default function ShiftsPage() {
   }, [user, authLoading, isHospital, router])
 
   useEffect(() => {
-    if (!user?.hospitalId) return
+    if (!user?.facilityId) return
 
     const fetchShifts = async () => {
       setLoading(true)
@@ -91,13 +93,13 @@ export default function ShiftsPage() {
             status,
             nurse_id,
             created_at,
-            nurse:nurses (
+            nurse:profiles (
               profiles:profiles (
                 full_name
               )
             )
           `)
-          .eq('hospital_id', user.hospitalId)
+          .eq('facility_id', user.facilityId)
           .order('start_time', { ascending: false })
 
         if (statusFilter !== 'all') {
@@ -111,7 +113,30 @@ export default function ShiftsPage() {
           return
         }
 
-        setShifts(data as unknown as ShiftWithNurse[] || [])
+        const fetchedShifts = data as unknown as ShiftWithNurse[] || []
+        setShifts(fetchedShifts)
+
+        // Fetch application counts for open shifts (non-PHI: counts only)
+        if (fetchedShifts.length > 0) {
+          const openIds = fetchedShifts.filter(s => s.status === 'open').map(s => s.id)
+          if (openIds.length > 0) {
+            try {
+              const { data: appData } = await supabase
+                .from('shift_applications' as never)
+                .select('shift_id')
+                .in('shift_id', openIds)
+                .eq('status', 'pending')
+
+              const counts: Record<string, number> = {}
+              for (const row of (appData ?? []) as Array<{ shift_id: string }>) {
+                counts[row.shift_id] = (counts[row.shift_id] ?? 0) + 1
+              }
+              setAppCounts(counts)
+            } catch {
+              // Non-fatal — table may not exist yet
+            }
+          }
+        }
       } catch (error) {
         console.error('Error:', error)
       } finally {
@@ -273,6 +298,17 @@ export default function ShiftsPage() {
                       <p className="text-xs text-ns-teal mt-1">
                         Assigned to: {shift.nurse.profiles.full_name || 'Unknown'}
                       </p>
+                    )}
+                    {/* Application count badge for open shifts */}
+                    {shift.status === 'open' && (appCounts[shift.id] ?? 0) > 0 && (
+                      <Link
+                        href={`/dashboard/applicants/${shift.id}`}
+                        onClick={e => e.stopPropagation()}
+                        className="inline-flex items-center gap-1 mt-1 text-xs text-ns-teal hover:text-ns-teal/80 transition-colors"
+                      >
+                        <Users className="h-3 w-3" />
+                        {appCounts[shift.id]} applicant{appCounts[shift.id] !== 1 ? 's' : ''} — View
+                      </Link>
                     )}
                   </div>
 

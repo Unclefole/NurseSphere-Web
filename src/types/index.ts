@@ -23,8 +23,8 @@ export interface NavItem {
 export interface AuthUser {
   id: string
   email: string
-  role: 'HOSPITAL' | 'NURSE'
-  hospitalId?: string
+  role: 'hospital_admin' | 'nurse'
+  facilityId?: string
   profile?: {
     fullName: string | null
     avatarUrl: string | null
@@ -42,8 +42,11 @@ export interface SpherAnalytics {
   optimizationRate: number // percentage
 }
 
-// Application with related data
-export interface ApplicationWithDetails extends Application {
+// Application with related data (applications table TBD in live schema)
+export interface ApplicationWithDetails {
+  id: string
+  status: string
+  applied_at: string
   nurse: {
     id: string
     profile: {
@@ -83,5 +86,5 @@ export interface ContractWithDetails extends Contract {
 }
 
 // Import base types
-import type { Application, Contract } from './database'
+import type { Contract } from './database'
 

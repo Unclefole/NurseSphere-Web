@@ -13,7 +13,6 @@ import {
   CreditCard,
   ClipboardList,
   ShieldCheck,
-  ChevronDown,
 } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { NotificationBell } from '@/components/notifications/NotificationBell'

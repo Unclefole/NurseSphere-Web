@@ -63,29 +63,14 @@ export default function IncidentsPage() {
   }, [user, authLoading, isHospital, router])
 
   useEffect(() => {
-    if (!user?.hospitalId) return
+    if (!user?.facilityId) return
 
     const fetchIncidents = async () => {
       setLoading(true)
       try {
-        let query = supabase
-          .from('incidents')
-          .select('id, title, description, severity, status, created_at, resolved_at')
-          .eq('hospital_id', user.hospitalId)
-          .order('created_at', { ascending: false })
-
-        if (statusFilter !== 'all') {
-          query = query.eq('status', statusFilter)
-        }
-
-        const { data, error } = await query
-
-        if (error) {
-          console.error('Error fetching incidents:', error)
-          return
-        }
-
-        setIncidents(data || [])
+        // Runtime guard: incidents table not yet provisioned
+        console.warn('[Incidents] Feature coming soon: incidents table not provisioned')
+        setIncidents([])
       } catch (error) {
         console.error('Error:', error)
       } finally {

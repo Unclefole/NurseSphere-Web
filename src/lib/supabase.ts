@@ -1,18 +1,23 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-// Validation happens at runtime - build will proceed without env vars
-// Runtime will fail appropriately if vars are missing
-const isServer = typeof window === 'undefined'
+function getRequiredEnvVar(name: string, value: string | undefined): string {
+  if (!value) {
+    throw new Error(
+      `Missing required environment variable: ${name}. ` +
+      `Set it in .env.local before running the app.`
+    )
+  }
+  return value
+}
 
 // Client-side Supabase client
 // Uses the same project as the mobile app - NO separate database
-// Using untyped client to ensure compatibility with live backend schema
 export const supabase: SupabaseClient = createClient(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseAnonKey || 'placeholder-key',
+  getRequiredEnvVar('NEXT_PUBLIC_SUPABASE_URL', supabaseUrl),
+  getRequiredEnvVar('NEXT_PUBLIC_SUPABASE_ANON_KEY', supabaseAnonKey),
   {
     auth: {
       autoRefreshToken: true,
@@ -25,8 +30,8 @@ export const supabase: SupabaseClient = createClient(
 // For server components (if needed)
 export function createServerClient(): SupabaseClient {
   return createClient(
-    supabaseUrl || 'https://placeholder.supabase.co',
-    supabaseAnonKey || 'placeholder-key',
+    getRequiredEnvVar('NEXT_PUBLIC_SUPABASE_URL', supabaseUrl),
+    getRequiredEnvVar('NEXT_PUBLIC_SUPABASE_ANON_KEY', supabaseAnonKey),
     {
       auth: {
         autoRefreshToken: false,
@@ -35,4 +40,3 @@ export function createServerClient(): SupabaseClient {
     }
   )
 }
-

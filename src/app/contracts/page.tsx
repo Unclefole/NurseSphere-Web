@@ -53,6 +53,9 @@ const statusConfig: Record<ContractStatus, { label: string; color: string; icon:
   signed: { label: 'Signed', color: 'ns-badge-success', icon: CheckCircle },
   expired: { label: 'Expired', color: 'ns-badge-warning', icon: AlertCircle },
   cancelled: { label: 'Cancelled', color: 'ns-badge-error', icon: XCircle },
+  pending_signature: { label: 'Awaiting Signatures', color: 'ns-badge-pending', icon: Clock },
+  executed: { label: 'Executed', color: 'ns-badge-success', icon: CheckCircle },
+  voided: { label: 'Voided', color: 'ns-badge-error', icon: XCircle },
 }
 
 export default function ContractsPage() {
@@ -76,7 +79,7 @@ export default function ContractsPage() {
   }, [user, authLoading, isHospital, router])
 
   useEffect(() => {
-    if (!user?.hospitalId) return
+    if (!user?.facilityId) return
 
     const fetchContracts = async () => {
       setLoading(true)
@@ -95,7 +98,7 @@ export default function ContractsPage() {
             spheri_optimized,
             created_at,
             expires_at,
-            nurse:nurses!inner (
+            nurse:profiles!inner (
               profiles:profiles!inner (
                 full_name,
                 email
@@ -106,7 +109,7 @@ export default function ContractsPage() {
               start_time
             )
           `)
-          .eq('hospital_id', user.hospitalId)
+          .eq('facility_id', user.facilityId)
           .order('created_at', { ascending: false })
 
         if (statusFilter !== 'all') {

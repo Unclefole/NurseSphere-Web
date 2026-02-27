@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import { DashboardLayout } from '@/components/layout'
 import { supabase } from '@/lib/supabase'
+import DOMPurify from 'dompurify'
 import {
   ArrowLeft,
   FileText,
@@ -79,7 +80,7 @@ export default function ContractDetailPage() {
   }, [user, authLoading, isHospital, router])
 
   useEffect(() => {
-    if (!user?.hospitalId || !contractId) return
+    if (!user?.facilityId || !contractId) return
 
     const fetchContract = async () => {
       setLoading(true)
@@ -102,7 +103,7 @@ export default function ContractDetailPage() {
             created_at,
             updated_at,
             expires_at,
-            nurse:nurses!inner (
+            nurse:profiles!inner (
               id,
               profiles:profiles!inner (
                 full_name,
@@ -118,7 +119,7 @@ export default function ContractDetailPage() {
             )
           `)
           .eq('id', contractId)
-          .eq('hospital_id', user.hospitalId)
+          .eq('facility_id', user.facilityId)
           .single()
 
         if (error) {
@@ -315,7 +316,7 @@ export default function ContractDetailPage() {
               <div className="prose prose-invert prose-sm max-w-none">
                 <div
                   className="text-gray-300 whitespace-pre-wrap"
-                  dangerouslySetInnerHTML={{ __html: contract.content }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(contract.content) }}
                 />
               </div>
             </div>

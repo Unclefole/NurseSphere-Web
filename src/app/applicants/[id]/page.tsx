@@ -84,11 +84,16 @@ export default function ApplicantDetailPage() {
   }, [user, authLoading, isHospital, router])
 
   useEffect(() => {
-    if (!user?.hospitalId || !applicationId) return
+    if (!user?.facilityId || !applicationId) return
 
     const fetchApplication = async () => {
       setLoading(true)
       try {
+        // Runtime guard: applications table not yet provisioned
+        console.warn('[Applicant Detail] Feature coming soon: applications table not provisioned')
+        setLoading(false)
+        return
+        // Dead code below — preserved for when applications table is created
         const { data, error } = await supabase
           .from('applications')
           .select(`
@@ -100,7 +105,7 @@ export default function ApplicantDetailPage() {
             cover_letter,
             reviewed_at,
             notes,
-            nurse:nurses!inner (
+            nurse:profiles!inner (
               id,
               specialty,
               years_experience,
@@ -129,7 +134,7 @@ export default function ApplicantDetailPage() {
             )
           `)
           .eq('id', applicationId)
-          .eq('hospital_id', user.hospitalId)
+          .eq('facility_id', user?.facilityId ?? '')
           .single()
 
         if (error) {

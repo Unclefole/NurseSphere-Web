@@ -76,11 +76,17 @@ export default function ApplicantsPage() {
   }, [user, authLoading, isHospital, router])
 
   useEffect(() => {
-    if (!user?.hospitalId) return
+    if (!user?.facilityId) return
 
     const fetchApplications = async () => {
       setLoading(true)
       try {
+        // Runtime guard: applications table not yet provisioned
+        console.warn('[Applicants] Feature coming soon: applications table not provisioned')
+        setApplications([])
+        setLoading(false)
+        return
+        // Dead code below — preserved for when applications table is created
         let query = supabase
           .from('applications')
           .select(`
@@ -90,7 +96,7 @@ export default function ApplicantsPage() {
             status,
             applied_at,
             cover_letter,
-            nurse:nurses!inner (
+            nurse:profiles!inner (
               id,
               specialty,
               years_experience,
@@ -110,7 +116,7 @@ export default function ApplicantsPage() {
               hourly_rate
             )
           `)
-          .eq('hospital_id', user.hospitalId)
+          .eq('facility_id', user?.facilityId ?? '')
           .order('applied_at', { ascending: false })
 
         if (statusFilter !== 'all') {

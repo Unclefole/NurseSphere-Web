@@ -49,39 +49,27 @@ export default function NursePortalPage() {
     const fetchNurseData = async () => {
       setDataLoading(true)
       try {
-        // Get nurse profile
-        const { data: nurseProfile } = await supabase
-          .from('nurses')
-          .select('id')
-          .eq('user_id', user.id)
-          .single()
-
-        if (!nurseProfile) {
-          setDataLoading(false)
-          return
-        }
-
-        // Fetch counts
+        // Fetch counts using user.id directly (profiles.id = auth.users.id)
         const [shiftsRes, contractsRes, complianceRes] = await Promise.all([
           supabase
             .from('shifts')
             .select('id', { count: 'exact', head: true })
-            .eq('nurse_id', nurseProfile.id)
+            .eq('nurse_id', user.id)
             .gte('start_time', new Date().toISOString()),
           supabase
             .from('contracts')
-            .select('id, nurse_signed', { count: 'exact' })
-            .eq('nurse_id', nurseProfile.id)
+            .select('id, status', { count: 'exact' })
+            .eq('nurse_id', user.id)
             .in('status', ['pending', 'signed']),
           supabase
-            .from('compliance_records')
+            .from('credentials')
             .select('id', { count: 'exact', head: true })
-            .eq('nurse_id', nurseProfile.id)
+            .eq('user_id', user.id)
             .in('status', ['expiring', 'expired', 'pending']),
         ])
 
         const contracts = contractsRes.data || []
-        const pendingSignatures = contracts.filter(c => !c.nurse_signed).length
+        const pendingSignatures = contracts.filter(c => c.status === 'pending').length
 
         setData({
           upcomingShifts: shiftsRes.count || 0,

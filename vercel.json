@@ -3,9 +3,14 @@
   "outputDirectory": ".next",
   "framework": "nextjs",
   "regions": ["iad1"],
-  "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "@supabase_url",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase_anon_key"
-  }
+  "crons": [
+    {
+      "path": "/api/compliance/sweep",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/credentials/check-expiration",
+      "schedule": "0 3 * * *"
+    }
+  ]
 }
-

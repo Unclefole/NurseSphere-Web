@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter, Space_Grotesk } from 'next/font/google'
 import { AuthProvider } from '@/contexts/AuthContext'
+import SessionTimeoutWarning from '@/components/SessionTimeoutWarning'
+import { ErrorBoundary } from '@/components/error-boundary'
 import './globals.css'
 
 const inter = Inter({
@@ -35,9 +37,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <body className="font-sans antialiased bg-ns-dark-950 text-white">
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <ErrorBoundary>
+          <AuthProvider>
+            {children}
+            <SessionTimeoutWarning />
+          </AuthProvider>
+        </ErrorBoundary>
       </body>
     </html>
   )
