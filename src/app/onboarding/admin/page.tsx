@@ -1,5 +1,5 @@
 'use client'
-import Image from 'next/image'
+import { Logo } from '@/components/Logo'
 
 /**
  * Admin (Facility) Onboarding Wizard — 4-step guided setup.
@@ -875,7 +875,7 @@ export default function AdminOnboardingPage() {
       <div className="w-full max-w-2xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <Image src="/logo.png" alt="NurseSphere" width={180} height={65} className="h-14 w-auto object-contain mx-auto rounded-lg" priority />
+          <Logo height={40} variant="light" className="mx-auto" />
           <p className="text-gray-500 text-sm">Set up your facility to start posting shifts</p>
         </div>
 

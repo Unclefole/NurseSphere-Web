@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
+import { Logo } from '@/components/Logo'
 import { useAuth } from '@/contexts/AuthContext'
 import {
   User,
@@ -39,14 +39,7 @@ export function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <Image
-              src="/logo.png"
-              alt="NurseSphere"
-              width={140}
-              height={50}
-              className="h-10 w-auto object-contain" style={{ mixBlendMode: "screen" }}
-              priority
-            />
+            <Logo height={36} variant="dark" />
           </Link>
 
           {/* Right side */}

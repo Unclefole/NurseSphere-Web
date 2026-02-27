@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
+import { Logo } from '@/components/Logo'
 import { useAuth } from '@/contexts/AuthContext'
 import { Mail, Lock, AlertCircle, Loader2 } from 'lucide-react'
 
@@ -43,7 +43,7 @@ export default function SignInPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <Image src="/logo.png" alt="NurseSphere" width={180} height={65} className="h-16 w-auto object-contain mx-auto" priority />
+            <Logo height={44} variant="dark" className="mx-auto" />
           </Link>
           <p className="mt-2 text-gray-400">Sign in to your hospital account</p>
         </div>

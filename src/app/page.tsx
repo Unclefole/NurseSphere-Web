@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
+import { Logo } from '@/components/Logo'
 import { useAuth } from '@/contexts/AuthContext'
 
 export default function HomePage() {
@@ -23,15 +23,7 @@ export default function HomePage() {
       <header className="sticky top-0 z-50 w-full px-6 py-4 bg-nurse-dark/80 backdrop-blur-md border-b border-white/5">
         <nav className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center space-x-2">
-            <Image
-              src="/logo.png"
-              alt="NurseSphere"
-              width={140}
-              height={50}
-              className="h-9 w-auto object-contain"
-              style={{ mixBlendMode: 'screen' }}
-              priority
-            />
+            <Logo height={34} variant="dark" />
           </div>
           <Link
             href="/auth/signin"

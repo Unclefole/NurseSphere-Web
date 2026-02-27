@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
+import { Logo } from '@/components/Logo'
 import { supabase } from '@/lib/supabase'
 import { Mail, AlertCircle, Loader2, CheckCircle, ArrowLeft } from 'lucide-react'
 
@@ -41,7 +41,7 @@ export default function ForgotPasswordPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <Image src="/logo.png" alt="NurseSphere" width={180} height={65} className="h-16 w-auto object-contain mx-auto" priority />
+            <Logo height={44} variant="dark" className="mx-auto" />
           </Link>
           <p className="mt-2 text-gray-400">Reset your password</p>
         </div>
