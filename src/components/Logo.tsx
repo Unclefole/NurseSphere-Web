@@ -1,58 +1,46 @@
 interface LogoProps {
   className?: string
-  /** 'dark' = dark bg (Nurse text white). 'light' = light bg (Nurse text navy). */
   variant?: 'dark' | 'light'
   height?: number
 }
 
 export function Logo({ className = '', variant = 'dark', height = 40 }: LogoProps) {
   const nurseColor = variant === 'dark' ? '#ffffff' : '#0f2d3d'
-  const teal = '#14b8a6'
-  const navy = '#0f2d3d'
+  const teal = '#2DD4BF'
+  const heartStroke = variant === 'dark' ? '#2DD4BF' : '#0d9488'
 
   return (
     <svg
-      viewBox="0 0 255 68"
+      width={height * 4}
       height={height}
+      viewBox="0 0 200 50"
+      fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-label="NurseSphere"
       className={className}
     >
-      {/* Left heart lobe arc */}
+      {/* Heart outline */}
       <path
-        d="M36,61 C36,61 5,47 5,26 C5,12 16,6 27,9 C32,11 35,15 36,20"
-        fill="none" stroke={teal} strokeWidth="5"
-        strokeLinecap="round" strokeLinejoin="round"
+        d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z"
+        stroke={heartStroke}
+        strokeWidth="1.5"
+        fill="none"
       />
 
-      {/* Globe circle (right lobe of heart) */}
-      <circle cx="50" cy="25" r="21" fill="none" stroke={teal} strokeWidth="5" />
-
-      {/* Globe latitude line */}
-      <ellipse cx="50" cy="25" rx="21" ry="8" fill="none" stroke={teal} strokeWidth="2.5" opacity="0.65" />
-
-      {/* Globe meridian line */}
-      <ellipse cx="50" cy="25" rx="10" ry="21" fill="none" stroke={teal} strokeWidth="2.5" opacity="0.65" />
-
-      {/* Bottom connecting arc to heart point */}
-      <path
-        d="M29,46 C32,55 35,60 36,61"
-        fill="none" stroke={teal} strokeWidth="5" strokeLinecap="round"
-      />
-
-      {/* Center teardrop shape in navy */}
-      <path
-        d="M36,12 C26,12 19,19 19,28 C19,43 33,55 36,61 C39,55 53,43 53,28 C53,19 46,12 36,12 Z"
-        fill={navy}
-      />
-
-      {/* White medical cross */}
-      <rect x="33" y="22" width="6" height="2.8" rx="1.4" fill="white" />
-      <rect x="34.6" y="19.5" width="2.8" height="8" rx="1.4" fill="white" />
+      {/* Medical cross inside heart */}
+      <rect x="11" y="7" width="2" height="8" rx="1" fill={teal} />
+      <rect x="8" y="10" width="8" height="2" rx="1" fill={teal} />
 
       {/* Wordmark */}
-      <text x="82" y="43" fontFamily="Inter, system-ui, sans-serif" fontWeight="700" fontSize="26" letterSpacing="-0.3">
-        <tspan fill={nurseColor}>Nurse</tspan><tspan fill={teal}>Sphere</tspan>
+      <text
+        x="32"
+        y="32"
+        fontFamily="Inter, sans-serif"
+        fontWeight="700"
+        fontSize="24"
+        fill={nurseColor}
+      >
+        Nurse<tspan fill={teal}>Sphere</tspan>
       </text>
     </svg>
   )
