@@ -41,7 +41,7 @@ export default function ForgotPasswordPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <Image src="/logo.jpg" alt="NurseSphere" width={180} height={65} className="h-16 w-auto object-contain mx-auto" priority />
+            <Image src="/logo.png" alt="NurseSphere" width={180} height={65} className="h-16 w-auto object-contain mx-auto" priority />
           </Link>
           <p className="mt-2 text-gray-400">Reset your password</p>
         </div>

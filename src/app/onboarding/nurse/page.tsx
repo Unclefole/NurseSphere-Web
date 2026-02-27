@@ -747,7 +747,7 @@ export default function NurseOnboardingPage() {
       <div className="w-full max-w-2xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <Image src="/logo.jpg" alt="NurseSphere" width={180} height={65} className="h-14 w-auto object-contain mx-auto rounded-lg" priority />
+          <Image src="/logo.png" alt="NurseSphere" width={180} height={65} className="h-14 w-auto object-contain mx-auto rounded-lg" priority />
           <p className="text-gray-500 text-sm">Let&apos;s get your account set up</p>
         </div>
 

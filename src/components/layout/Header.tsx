@@ -41,11 +41,11 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <Image
-              src="/logo.jpg"
+              src="/logo.png"
               alt="NurseSphere"
               width={140}
               height={50}
-              className="h-10 w-auto object-contain"
+              className="h-10 w-auto object-contain" style={{ mixBlendMode: "screen" }}
               priority
             />
           </Link>
