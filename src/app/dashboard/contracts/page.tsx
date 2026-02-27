@@ -271,10 +271,22 @@ export default function DashboardContractsPage() {
   async function handleGeneratePdf(contract: ContractRow) {
     setActionLoading((p) => ({ ...p, [contract.id]: 'pdf' }))
     try {
-      const res = await fetch(`/api/contracts/${contract.id}/generate-pdf`, { method: 'POST' })
-      const j = await res.json()
-      if (!res.ok) throw new Error(j.error ?? 'Failed to generate PDF')
-      showToast('Document generated successfully!')
+      const res = await fetch(`/api/contracts/${contract.id}/pdf`, { method: 'GET' })
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}))
+        throw new Error(j.error ?? 'Failed to generate PDF')
+      }
+      // Trigger browser download
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${contract.title.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_')}_${contract.id.slice(0, 8)}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+      showToast('PDF downloaded successfully!')
       fetchContracts()
     } catch (e: unknown) {
       showToast(e instanceof Error ? e.message : 'Error generating PDF')
