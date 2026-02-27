@@ -9,6 +9,11 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Enterprise landing colors (Stitch design)
+        'nurse-dark': '#0a191f',
+        'nurse-navy': '#0f272e',
+        'nurse-teal': '#14b8a6',
+        'nurse-border': 'rgba(20, 184, 166, 0.2)',
         // NurseSphere brand colors from the design
         'ns-dark': {
           950: '#0a0e14',
@@ -40,6 +45,7 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
         display: ['var(--font-space-grotesk)', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-playfair)', 'Georgia', 'serif'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
