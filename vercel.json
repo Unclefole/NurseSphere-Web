@@ -11,6 +11,14 @@
     {
       "path": "/api/credentials/check-expiration",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/agents/compliance-guardian",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/agents/workforce-optimization",
+      "schedule": "0 5 * * *"
     }
   ]
 }

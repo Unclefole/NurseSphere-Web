@@ -41,6 +41,21 @@ export const featureFlags = {
   risk_certificates: process.env.FEATURE_RISK_CERTIFICATES !== 'false',
   // Safe-on: litigation defense export available to hospital_admin + super_admin
   litigation_defense_export: process.env.FEATURE_LITIGATION_DEFENSE_EXPORT !== 'false',
+
+  // ── Agent Stack (PENCLAW) ───────────────────────────────────────────────────
+  // All agents are safe-off by default. Enable per environment when ready.
+
+  // ComplianceGuardian: nightly credential compliance check for all active nurses
+  // Enable after migrations 026–027 are applied and verified in production
+  agent_compliance_guardian: process.env.FEATURE_AGENT_COMPLIANCE_GUARDIAN === 'true',
+
+  // CredentialIntelligence: extracted_json population on credential upload
+  // Enable after migration 030 (extracted_json column) is applied
+  agent_credential_intelligence: process.env.FEATURE_AGENT_CREDENTIAL_INTELLIGENCE === 'true',
+
+  // WorkforceOptimization: daily fill rate + shortage risk computation per facility
+  // Enable after migrations 028–029 are applied and verified in production
+  agent_workforce_optimization: process.env.FEATURE_AGENT_WORKFORCE_OPTIMIZATION === 'true',
 } as const;
 
 export type FeatureFlag = keyof typeof featureFlags;

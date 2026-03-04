@@ -787,6 +787,117 @@ export interface Database {
         }
         Relationships: []
       }
+
+      // ── Agent Stack: compliance_rules (migration 026) ───────────────────────
+      compliance_rules: {
+        Row: {
+          id: string
+          facility_id: string | null
+          state: string | null
+          role: string | null
+          required_credentials: unknown[]   // RequiredCredentialRule[]
+          effective_date: string
+          source: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          facility_id?: string | null
+          state?: string | null
+          role?: string | null
+          required_credentials?: unknown[]
+          effective_date?: string
+          source?: string
+          created_at?: string
+        }
+        Update: {
+          required_credentials?: unknown[]
+          effective_date?: string
+          source?: string
+        }
+        Relationships: []
+      }
+
+      // ── Agent Stack: compliance_checks (migration 027) ──────────────────────
+      compliance_checks: {
+        Row: {
+          id: string
+          nurse_id: string
+          facility_id: string | null
+          check_type: 'SHIFT_BOOKING' | 'NIGHTLY_SWEEP' | 'ONBOARDING'
+          result: 'PASS' | 'FAIL' | 'WARN'
+          details: Record<string, unknown>
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          nurse_id: string
+          facility_id?: string | null
+          check_type: 'SHIFT_BOOKING' | 'NIGHTLY_SWEEP' | 'ONBOARDING'
+          result: 'PASS' | 'FAIL' | 'WARN'
+          details?: Record<string, unknown>
+          created_at?: string
+        }
+        Update: never   // immutable — no updates allowed
+        Relationships: []
+      }
+
+      // ── Agent Stack: agent_alerts (migration 028) ───────────────────────────
+      agent_alerts: {
+        Row: {
+          id: string
+          user_id: string
+          type: 'CREDENTIAL_EXPIRING' | 'CREDENTIAL_EXPIRED' | 'COMPLIANCE_FAIL' | 'SHORTAGE_RISK'
+          severity: 'LOW' | 'MED' | 'HIGH'
+          payload: Record<string, unknown>
+          status: 'NEW' | 'SENT' | 'ACKED'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          type: 'CREDENTIAL_EXPIRING' | 'CREDENTIAL_EXPIRED' | 'COMPLIANCE_FAIL' | 'SHORTAGE_RISK'
+          severity: 'LOW' | 'MED' | 'HIGH'
+          payload?: Record<string, unknown>
+          status?: 'NEW' | 'SENT' | 'ACKED'
+          created_at?: string
+        }
+        Update: {
+          status?: 'NEW' | 'SENT' | 'ACKED'
+        }
+        Relationships: []
+      }
+
+      // ── Agent Stack: facility_metrics (migration 029) ───────────────────────
+      facility_metrics: {
+        Row: {
+          id: string
+          facility_id: string
+          date: string
+          requested_shifts: number
+          filled_shifts: number
+          canceled_shifts: number
+          avg_time_to_fill_minutes: number | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          facility_id: string
+          date: string
+          requested_shifts?: number
+          filled_shifts?: number
+          canceled_shifts?: number
+          avg_time_to_fill_minutes?: number | null
+          created_at?: string
+        }
+        Update: {
+          requested_shifts?: number
+          filled_shifts?: number
+          canceled_shifts?: number
+          avg_time_to_fill_minutes?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -822,6 +933,12 @@ export type PushToken = Database['public']['Tables']['push_tokens']['Row']
 export type ComplianceSweepLog = Database['public']['Tables']['compliance_sweep_log']['Row']
 export type Competency = Database['public']['Tables']['competencies']['Row']
 export type ShiftRiskCertificate = Database['public']['Tables']['shift_risk_certificates']['Row']
+
+// ── Agent Stack helper types (migrations 026–029) ─────────────────────────────
+export type ComplianceRule    = Database['public']['Tables']['compliance_rules']['Row']
+export type ComplianceCheck   = Database['public']['Tables']['compliance_checks']['Row']
+export type AgentAlert        = Database['public']['Tables']['agent_alerts']['Row']
+export type FacilityMetric    = Database['public']['Tables']['facility_metrics']['Row']
 
 // Legacy aliases (for gradual migration — remove once all references updated)
 export type Hospital = Facility
