@@ -1,0 +1,1 @@
+-- Migration applied remotely on 2026-02-19. Stub for CLI history sync.

@@ -1,0 +1,55 @@
+-- =============================================================================
+-- Migration 007: Phase 7 RLS Coverage Audit — New Tables
+-- Generated: 2026-02-24 (Phase 7 Production Hardening)
+-- =============================================================================
+--
+-- AUDIT RESULT: No net-new tables detected beyond those covered in 001-006.
+--
+-- Tables with existing RLS coverage (verified in 001-006):
+--   profiles           — covered in 002_facility_rls_policies.sql
+--   facilities         — covered in 002_facility_rls_policies.sql
+--   shifts             — covered in 002_facility_rls_policies.sql
+--   contracts          — covered in 002_facility_rls_policies.sql
+--   credentials        — covered in 002_facility_rls_policies.sql
+--   files              — covered in 002_facility_rls_policies.sql
+--   messages           — covered in 002_facility_rls_policies.sql
+--   audit_logs         — covered in 002_facility_rls_policies.sql
+--   facility_admins    — covered in 001_facility_admins.sql
+--
+-- The grep audit of /nursesphere-web/src/ found no references to tables outside
+-- the above list. If new tables are added in the future, follow this template:
+-- =============================================================================
+
+-- Template for adding RLS to a new table (fill in <table_name> and policies):
+-- ============================================================================
+-- -- Enable RLS
+-- ALTER TABLE public.<table_name> ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE public.<table_name> FORCE ROW LEVEL SECURITY;
+--
+-- -- Admin / service read
+-- CREATE POLICY "<table_name>_select_admin"
+--   ON public.<table_name>
+--   FOR SELECT
+--   USING (
+--     auth.uid() IN (
+--       SELECT user_id FROM public.facility_admins
+--     )
+--   );
+--
+-- -- Owner read/write
+-- CREATE POLICY "<table_name>_owner_rw"
+--   ON public.<table_name>
+--   FOR ALL
+--   USING (auth.uid() = user_id)
+--   WITH CHECK (auth.uid() = user_id);
+-- ============================================================================
+
+-- Future tables expected from Phase 8+ roadmap (pre-register for tracking):
+-- invoices    — billing module
+-- payouts     — payout disbursement
+-- notifications — in-app notification store
+--
+-- Add RLS migrations for these when their CREATE TABLE migrations land.
+
+-- No-op placeholder so migration runner doesn't error on empty file:
+SELECT 'Migration 007: RLS audit complete — no new tables requiring policies' AS status;
